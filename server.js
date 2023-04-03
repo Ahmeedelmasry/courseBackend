@@ -73,8 +73,15 @@ let students = [
   },
 ];
 
+const attachId = (arr) => {
+  arr.forEach((item, i) => {
+    item.id = i + 1;
+  });
+};
+
 app.get("/", (req, res) => {
   try {
+    attachId(students);
     res.json(students);
   } catch (error) {
     console.log(error);
@@ -86,6 +93,7 @@ app.post("/add-student", (req, res) => {
     let reqBody = req.body;
     reqBody.id = students.length + 1;
     students.push(reqBody);
+    attachId(students);
     res.json(students);
   } catch (error) {
     console.log(error);
@@ -96,11 +104,13 @@ app.post("/update-student/:id", (req, res) => {
     students.forEach((st) => {
       if (st.id == req.params.id) {
         for (let [key, val] of Object.entries(req.body)) {
-          st[key] = val;
-          console.log(st);
+          if (st[key]) {
+            st[key] = val;
+          }
         }
       }
     });
+    attachId(students);
     res.json(students);
   } catch (error) {
     console.log(error);
@@ -113,6 +123,7 @@ app.delete("/delete-student/:id", (req, res) => {
         students.splice(i, 1);
       }
     });
+    attachId(students);
     res.json(students);
   } catch (error) {
     console.log(error);
